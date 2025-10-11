@@ -101,6 +101,7 @@ jobs:
             --concurrency=80
           env_vars: |
             NODE_ENV=production
+            SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
           labels: |
             app=macdollar-tournament
             env=${{ env.DEPLOY_ENV }}
