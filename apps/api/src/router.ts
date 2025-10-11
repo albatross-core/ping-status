@@ -72,7 +72,7 @@ const history = router.history.handler(async () => {
       monitorName: incident.monitorName,
       day: sql<string>`DATE(${incident.openedAt})`,
       totalDowntime:
-        sql<number>`SUM(EXTRACT(EPOCH FROM (COALESCE(${incident.closedAt}, NOW()) - ${incident.openedAt})))`.mapWith(
+        sql<number>`SUM((julianday(COALESCE(${incident.closedAt}, datetime('now'))) - julianday(${incident.openedAt})) * 86400)`.mapWith(
           (v) => Math.round(v)
         ),
     })

@@ -1,28 +1,29 @@
 import { relations } from "drizzle-orm";
 import {
-  boolean,
-  index,
   integer,
-  pgTable,
+  sqliteTable,
   text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+  index,
+} from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 
-export const pingResult = pgTable(
+export const pingResult = sqliteTable(
   "pingResult",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    monitorName: text().notNull(),
-    success: boolean().notNull(),
-    message: text(),
-    responseTime: integer().notNull(),
-    status: integer().notNull(),
-    createdAt: timestamp().notNull().defaultNow(),
-    incidentId: integer().references(() => incident.id),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    monitorName: text("monitorName").notNull(),
+    success: integer("success", { mode: "boolean" }).notNull(),
+    message: text("message"),
+    responseTime: integer("responseTime").notNull(),
+    status: integer("status").notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    incidentId: integer("incidentId").references(() => incident.id),
   },
-  (table) => [index("pingResult_monitorName_idx").on(table.monitorName)]
+  (table) => ({
+    monitorNameIdx: index("pingResult_monitorName_idx").on(table.monitorName),
+  })
 );
 
 export const pingResultSchema = createSelectSchema(pingResult);
@@ -34,15 +35,17 @@ export const insertPingResultSchema = pingResultSchema.omit({
 export type InsertPingResult = z.infer<typeof insertPingResultSchema>;
 export type PingResult = z.infer<typeof pingResultSchema>;
 
-export const incident = pgTable(
+export const incident = sqliteTable(
   "incident",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    monitorName: text().notNull(),
-    openedAt: timestamp().notNull().defaultNow(),
-    closedAt: timestamp(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    monitorName: text("monitorName").notNull(),
+    openedAt: integer("openedAt", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    closedAt: integer("closedAt", { mode: "timestamp" }),
   },
-  (table) => [index("incident_monitorName_idx").on(table.monitorName)]
+  (table) => ({
+    monitorNameIdx: index("incident_monitorName_idx").on(table.monitorName),
+  })
 );
 
 export const incidentSchema = createSelectSchema(incident);
