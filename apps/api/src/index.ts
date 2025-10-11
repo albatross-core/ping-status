@@ -41,4 +41,11 @@ const api = new Hono()
     await next();
   });
 
-export default api;
+const port = Number.parseInt(process.env.PORT || "3000", 10);
+
+console.log(`Server starting on port ${port}`);
+
+export default {
+  port,
+  fetch: api.fetch,
+};
