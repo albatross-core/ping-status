@@ -7,10 +7,14 @@ COPY tsconfig*.json ./
 
 COPY packages/ ./packages/
 COPY apps/api/ ./apps/api/
+COPY apps/pinger/ ./apps/pinger/
 COPY apps/web/ ./apps/web/
 
 RUN bun install
 
 RUN bun run build
 
-CMD ["bun", "run", "start:app"]
+COPY infra/start.sh ./
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]

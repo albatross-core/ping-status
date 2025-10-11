@@ -1,5 +1,5 @@
-import { env } from "@ping-status/env";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { Database } from "bun:sqlite";
+import { drizzle } from "drizzle-orm/bun-sqlite";
 import {
   incident,
   incidentRelations,
@@ -14,6 +14,7 @@ const schema = {
   incidentRelations,
 };
 
-const db = drizzle(env.DATABASE_URL, { schema });
+const sqlite = new Database("ping-status.db");
+const db = drizzle(sqlite, { schema });
 
 export { db };
