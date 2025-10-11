@@ -101,7 +101,6 @@ jobs:
             --concurrency=80
           env_vars: |
             NODE_ENV=production
-            PORT=8080
           labels: |
             app=macdollar-tournament
             env=${{ env.DEPLOY_ENV }}
