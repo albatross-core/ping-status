@@ -15,13 +15,25 @@ import {
   isNotNull,
   isNull,
   lt,
-  max,
   or,
   sql,
 } from "drizzle-orm";
 import contract from "@/contract";
 
 const router = implement(contract);
+
+// Helper function to calculate percentile
+function calculatePercentile(values: number[], percentile: number): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const index = (percentile / 100) * (sorted.length - 1);
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+  const weight = index - lower;
+  const lowerValue = sorted[lower] ?? 0;
+  const upperValue = sorted[upper] ?? 0;
+  return Math.round(lowerValue * (1 - weight) + upperValue * weight);
+}
 
 const health = router.health.handler(() => ({
   name: "ping-status",
@@ -183,15 +195,12 @@ const lastWeekLatencies = router.lastWeekLatencies.handler(async () => {
 
   const monitorNames = monitorsArray.map((m) => m.name);
 
-  const latencies = await db
+  // Fetch all ping results for the period
+  const allPings = await db
     .select({
       monitorName: pingResult.monitorName,
-      date: sql`DATE_TRUNC('hour', ${pingResult.createdAt}) AT TIME ZONE 'UTC'`.mapWith(
-        (v) => new Date(v).toISOString()
-      ),
-      p95: sql`percentile_cont(0.95) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-        (v) => Math.round(v)
-      ),
+      createdAt: pingResult.createdAt,
+      responseTime: pingResult.responseTime,
     })
     .from(pingResult)
     .where(
@@ -199,17 +208,25 @@ const lastWeekLatencies = router.lastWeekLatencies.handler(async () => {
         inArray(pingResult.monitorName, monitorNames),
         gte(pingResult.createdAt, startOfPeriod)
       )
-    )
-    .groupBy(
-      pingResult.monitorName,
-      sql`DATE_TRUNC('hour', ${pingResult.createdAt})`
-    )
-    .orderBy(
-      pingResult.monitorName,
-      sql`DATE_TRUNC('hour', ${pingResult.createdAt})`
     );
 
-  const latenciesByMonitor = Object.groupBy(latencies, (l) => l.monitorName);
+  // Group by monitor and hour, calculate p95
+  const latenciesByMonitorAndHour = new Map<string, Map<string, number[]>>();
+
+  for (const ping of allPings) {
+    const hour = new Date(ping.createdAt).toISOString().substring(0, 13) + ":00:00.000Z";
+
+    if (!latenciesByMonitorAndHour.has(ping.monitorName)) {
+      latenciesByMonitorAndHour.set(ping.monitorName, new Map());
+    }
+
+    const monitorMap = latenciesByMonitorAndHour.get(ping.monitorName)!;
+    if (!monitorMap.has(hour)) {
+      monitorMap.set(hour, []);
+    }
+
+    monitorMap.get(hour)!.push(ping.responseTime);
+  }
 
   return monitorsArray.map(({ name, url, method }) => ({
     monitor: {
@@ -217,11 +234,12 @@ const lastWeekLatencies = router.lastWeekLatencies.handler(async () => {
       url,
       method,
     },
-    latencies:
-      latenciesByMonitor[name]?.map((l) => ({
-        date: l.date,
-        p95: l.p95,
-      })) || [],
+    latencies: Array.from(latenciesByMonitorAndHour.get(name)?.entries() || [])
+      .map(([date, responseTimes]) => ({
+        date,
+        p95: calculatePercentile(responseTimes, 95),
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date)),
   }));
 });
 
@@ -351,27 +369,11 @@ const monitorDetails = router.monitorDetails.handler(
     const currentFrom = subDays(new Date(), input.period);
     const previousFrom = subDays(currentFrom, input.period);
 
-    const [currentStats] = await db
+    const currentData = await db
       .select({
-        total: count(),
-        success:
-          sql<number>`COUNT(CASE WHEN ${pingResult.success} = true THEN 1 END)`.mapWith(
-            Number
-          ),
-        fails:
-          sql<number>`COUNT(CASE WHEN ${pingResult.success} = false THEN 1 END)`.mapWith(
-            Number
-          ),
-        lastTimestamp: max(pingResult.createdAt),
-        p50: sql`percentile_cont(0.50) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-          (v) => Math.round(v)
-        ),
-        p95: sql`percentile_cont(0.95) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-          (v) => Math.round(v)
-        ),
-        p99: sql`percentile_cont(0.99) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-          (v) => Math.round(v)
-        ),
+        success: pingResult.success,
+        responseTime: pingResult.responseTime,
+        createdAt: pingResult.createdAt,
       })
       .from(pingResult)
       .where(
@@ -381,32 +383,27 @@ const monitorDetails = router.monitorDetails.handler(
         )
       );
 
+    const currentResponseTimes = currentData.map(d => d.responseTime);
+    const [currentStats] = [{
+      total: currentData.length,
+      success: currentData.filter(d => d.success).length,
+      fails: currentData.filter(d => !d.success).length,
+      lastTimestamp: currentData.length > 0 ? currentData.reduce((max, d) => d.createdAt > max ? d.createdAt : max, currentData[0]!.createdAt) : null,
+      p50: calculatePercentile(currentResponseTimes, 50),
+      p95: calculatePercentile(currentResponseTimes, 95),
+      p99: calculatePercentile(currentResponseTimes, 99),
+    }];
+
     if (!currentStats) {
       throw errors.NOT_FOUND();
     }
 
     const currentUptime = (currentStats.success / currentStats.total) * 100;
 
-    const [previousStats] = await db
+    const previousData = await db
       .select({
-        total: count(),
-        success:
-          sql<number>`COUNT(CASE WHEN ${pingResult.success} = true THEN 1 END)`.mapWith(
-            Number
-          ),
-        fails:
-          sql<number>`COUNT(CASE WHEN ${pingResult.success} = false THEN 1 END)`.mapWith(
-            Number
-          ),
-        p50: sql`percentile_cont(0.50) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-          (v) => Math.round(v)
-        ),
-        p95: sql`percentile_cont(0.95) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-          (v) => Math.round(v)
-        ),
-        p99: sql`percentile_cont(0.99) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-          (v) => Math.round(v)
-        ),
+        success: pingResult.success,
+        responseTime: pingResult.responseTime,
       })
       .from(pingResult)
       .where(
@@ -417,53 +414,60 @@ const monitorDetails = router.monitorDetails.handler(
         )
       );
 
+    const previousResponseTimes = previousData.map(d => d.responseTime);
+    const [previousStats] = [{
+      total: previousData.length,
+      success: previousData.filter(d => d.success).length,
+      fails: previousData.filter(d => !d.success).length,
+      p50: calculatePercentile(previousResponseTimes, 50),
+      p95: calculatePercentile(previousResponseTimes, 95),
+      p99: calculatePercentile(previousResponseTimes, 99),
+    }];
+
     if (!previousStats) {
       throw errors.NOT_FOUND();
     }
 
     const previousUptime = (previousStats.success / previousStats.total) * 100;
 
-    const pingResultsByHour = await db
-      .select({
-        date: sql`DATE_TRUNC('hour', ${pingResult.createdAt}) AT TIME ZONE 'UTC'`.mapWith(
-          (v) => new Date(v).toISOString()
-        ),
-        success:
-          sql<number>`COUNT(CASE WHEN ${pingResult.success} = true THEN 1 END)`.mapWith(
-            Number
-          ),
-        fail: sql<number>`COUNT(CASE WHEN ${pingResult.success} = false THEN 1 END)`.mapWith(
-          Number
-        ),
-      })
-      .from(pingResult)
-      .where(
-        and(
-          gte(pingResult.createdAt, currentFrom),
-          eq(pingResult.monitorName, input.monitorName)
-        )
-      )
-      .groupBy(sql`DATE_TRUNC('hour', ${pingResult.createdAt})`)
-      .orderBy(sql`DATE_TRUNC('hour', ${pingResult.createdAt})`);
+    // Group by hour manually
+    const hourlyResultsMap = new Map<string, { success: number; fail: number }>();
+    const hourlyLatenciesMap = new Map<string, number[]>();
 
-    const pingLatenciesByHour = await db
-      .select({
-        date: sql`DATE_TRUNC('hour', ${pingResult.createdAt}) AT TIME ZONE 'UTC'`.mapWith(
-          (v) => new Date(v).toISOString()
-        ),
-        p95: sql`percentile_cont(0.95) WITHIN GROUP (ORDER BY ${pingResult.responseTime})`.mapWith(
-          (v) => Math.round(v)
-        ),
-      })
-      .from(pingResult)
-      .where(
-        and(
-          gte(pingResult.createdAt, currentFrom),
-          eq(pingResult.monitorName, input.monitorName)
-        )
-      )
-      .groupBy(sql`DATE_TRUNC('hour', ${pingResult.createdAt})`)
-      .orderBy(sql`DATE_TRUNC('hour', ${pingResult.createdAt})`);
+    for (const result of currentData) {
+      const hour = new Date(result.createdAt).toISOString().substring(0, 13) + ":00:00.000Z";
+
+      if (!hourlyResultsMap.has(hour)) {
+        hourlyResultsMap.set(hour, { success: 0, fail: 0 });
+      }
+      if (!hourlyLatenciesMap.has(hour)) {
+        hourlyLatenciesMap.set(hour, []);
+      }
+
+      const hourData = hourlyResultsMap.get(hour)!;
+      if (result.success) {
+        hourData.success++;
+      } else {
+        hourData.fail++;
+      }
+
+      hourlyLatenciesMap.get(hour)!.push(result.responseTime);
+    }
+
+    const pingResultsByHour = Array.from(hourlyResultsMap.entries())
+      .map(([date, data]) => ({
+        date,
+        success: data.success,
+        fail: data.fail,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    const pingLatenciesByHour = Array.from(hourlyLatenciesMap.entries())
+      .map(([date, responseTimes]) => ({
+        date,
+        p95: calculatePercentile(responseTimes, 95),
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
 
     return {
       monitor,
