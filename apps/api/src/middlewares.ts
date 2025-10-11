@@ -10,8 +10,8 @@ export const serveWebApp = createMiddleware((c, next) => {
   }
 
   if (c.req.path.match(STATIC_FILE_REGEX)) {
-    return serveStatic({ root: "./apps/api/public" })(c, next);
+    return serveStatic({ root: "./public" })(c, next);
   }
 
-  return serveStatic({ path: "/index.html", root: "./apps/api/public" })(c, next);
+  return serveStatic({ path: "/index.html", root: "./public" })(c, next);
 });
