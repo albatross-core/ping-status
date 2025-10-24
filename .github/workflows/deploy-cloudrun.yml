@@ -72,6 +72,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            --platform linux/amd64 \
             --file infra/Dockerfile.standalone \
             --build-arg GIT_SHA=$GITHUB_SHA \
             --build-arg GIT_VERSION=$TAG \
