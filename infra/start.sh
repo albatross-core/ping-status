@@ -8,12 +8,6 @@ echo "Starting standalone ping-status service..."
 echo "Running database migrations..."
 bun run db:migrate
 
-# Start pinger in background
-echo "Starting pinger..."
-bun run start:pinger &
+echo ""
 
-# Start API server in foreground
-echo "Starting API server..."
-exec bun run start:app
-
-# pm2-runtime start /app/ecosystem.config.cjs
+pm2-runtime start /app/ecosystem.config.cjs
