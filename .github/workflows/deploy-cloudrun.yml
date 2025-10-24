@@ -72,7 +72,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            --file infra/Dockerfile.app \
+            --file infra/Dockerfile.standalone \
             --build-arg GIT_SHA=$GITHUB_SHA \
             --build-arg GIT_VERSION=$TAG \
             --tag $IMAGE_URI:latest \
@@ -99,8 +99,11 @@ jobs:
             --min-instances=0
             --max-instances=10
             --concurrency=80
+            --timeout=300
           env_vars: |
             NODE_ENV=production
+            PORT=8080
+            DATABASE_PATH=/app/data/ping-status.db
             SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
           labels: |
             app=macdollar-tournament
