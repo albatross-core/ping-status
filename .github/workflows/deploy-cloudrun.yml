@@ -102,7 +102,6 @@ jobs:
             --timeout=300
           env_vars: |
             NODE_ENV=production
-            PORT=8080
             DATABASE_PATH=/app/data/ping-status.db
             SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
           labels: |
