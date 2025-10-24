@@ -21,11 +21,11 @@ RUN bun run build
 # Install PM2 globally
 RUN bun install -g pm2
 
-# Create logs directory for PM2
-RUN mkdir -p /app/logs
+# Create logs and data directories
+RUN mkdir -p /app/logs /app/data
 
-COPY infra/start.sh ./start.sh
 COPY infra/ecosystem.config.cjs ./ecosystem.config.cjs
+COPY infra/start.sh ./start.sh
 RUN chmod +x start.sh
 
 CMD ["./start.sh"]
