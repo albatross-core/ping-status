@@ -79,7 +79,7 @@ export class Notifier extends Effect.Service<Notifier>()("Notifier", {
       pipe(
         client.execute(
           pipe(
-            HttpClientRequest.post(env.SLACK_WEBHOOK_URL),
+            HttpClientRequest.post(env.SLACK_WEBHOOK_URL ?? ""), // if we reach this the SLACK_WEBHOOK_URL is defined
             HttpClientRequest.bodyUnsafeJson(message)
           )
         ),

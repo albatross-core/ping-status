@@ -1,7 +1,6 @@
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import { env } from "@ping-status/env";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { serveWebApp } from "@/middlewares";
@@ -42,7 +41,9 @@ const api = new Hono()
     await next();
   });
 
+const port = Number.parseInt(process.env.PORT || "3000", 10);
+
 export default {
-  port: env.PORT,
+  port,
   fetch: api.fetch,
 };
