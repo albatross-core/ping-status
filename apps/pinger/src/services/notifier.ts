@@ -1,6 +1,6 @@
 import { HttpClient, HttpClientRequest } from "@effect/platform";
+import { env } from "@ping-status/config/env";
 import type { Incident, PingResult } from "@ping-status/db/schema";
-import { env } from "@ping-status/env";
 import { formatDistance } from "date-fns";
 import { Console, Duration, Effect, pipe, Schedule } from "effect";
 import { table } from "table";

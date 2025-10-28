@@ -6,8 +6,9 @@ services:
       dockerfile: infra/Dockerfile.standalone
     ports:
       - 8080:8080
+    env_file:
+      - .env
     environment:
-      # DO NOT set MONITOR_INTERVAL_MINUTES - PM2 cron handles scheduling
       - PORT=8080
       - DATABASE_PATH=/app/data/ping-status.db
     volumes:

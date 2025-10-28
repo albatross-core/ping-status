@@ -102,6 +102,9 @@ jobs:
           env_vars: |
             NODE_ENV=production
             SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
+            CC_SECRET_TOKEN=${{ secrets.CC_SECRET_TOKEN }}
+            HC_SECRET_TOKEN=${{ secrets.HC_SECRET_TOKEN }}
+            MONITOR_INTERVAL_MINUTES=${{ secrets.MONITOR_INTERVAL_MINUTES }}
           labels: |
             app=macdollar-tournament
             env=${{ env.DEPLOY_ENV }}
