@@ -21,6 +21,7 @@
     "@orpc/openapi": "^1.9.2",
     "@orpc/server": "^1.9.2",
     "@orpc/zod": "^1.9.2",
+    "@ping-status/env": "workspace:*",
     "@ping-status/monitor": "workspace:*",
     "badge-maker": "^5.0.2",
     "date-fns": "^4.1.0",
