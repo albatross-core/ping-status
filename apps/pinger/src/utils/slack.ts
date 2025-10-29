@@ -71,19 +71,16 @@ export function formatOpenIncidentsMessage(incidents: OpenIncident[]) {
       header(`🔴 Service Health Alert - ${incidents.length} incidents opened`),
       table(
         ["Service Name", "#ID", "Status", "Status Code", "Message"],
-        incidents.map(
-          (i) =>
-            [
-              i.monitorName,
-              tableLinkCell(
-                `#${i.id}`,
-                `https://status.usealbatross.ai/aldo2025/requests?incidentId=${i.id}`
-              ),
-              i.type === "down" ? "🔴 Down" : "🟡 Degraded",
-              i.statusCode,
-              i.message,
-            ] as (string | TableCell)[]
-        )
+        incidents.map((i) => [
+          i.monitorName,
+          tableLinkCell(
+            `#${i.id}`,
+            `https://status.usealbatross.ai/aldo2025/requests?incidentId=${i.id}`
+          ),
+          i.type === "down" ? "🔴 Down" : "🟡 Degraded",
+          `${i.statusCode || "-"}`,
+          i.message || "-",
+        ])
       ),
     ],
   };
