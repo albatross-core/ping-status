@@ -11,5 +11,3 @@ services:
     environment:
       - PORT=8080
       - DATABASE_PATH=/app/data/ping-status.db
-    volumes:
-      - ./data:/app/data

@@ -26,6 +26,12 @@ RUN mkdir -p /app/logs /app/data
 
 COPY infra/ecosystem.config.cjs ./ecosystem.config.cjs
 COPY infra/start.sh ./start.sh
+COPY infra/litestream.yml ./litestream.yml
 RUN chmod +x start.sh
+
+
+# Install litestream
+ADD https://github.com/benbjohnson/litestream/releases/download/v0.5.2/litestream-0.5.2-linux-x86_64.tar.gz /tmp/litestream.tar.gz
+RUN tar -C /usr/local/bin -xzf /tmp/litestream.tar.gz
 
 CMD ["./start.sh"]

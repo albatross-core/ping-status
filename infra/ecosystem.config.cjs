@@ -2,6 +2,20 @@
 module.exports = {
   apps: [
     {
+      name: "litestream",
+      script: "litestream",
+      args: "replicate -config ./litestream.yml",
+      cwd: "/app",
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: "1G",
+      error_file: "/app/logs/litestream-error.log",
+      out_file: "/app/logs/litestream-out.log",
+      log_date_format: "YYYY-MM-DD HH:mm:ss Z",
+      merge_logs: true,
+    },
+    {
       name: "app",
       script: "bun",
       args: "run start:app",
