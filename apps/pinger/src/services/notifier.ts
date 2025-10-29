@@ -13,10 +13,8 @@ function formatOpenIncidentsMessage(incidents: OpenIncident[]) {
     ["Service Name", "#ID", "Status", "Status Code", "Message"],
     ...incidents.map((i) => [
       i.monitorName,
-      i.id,
+      `<https://status.usealbatross.ai/aldo2025/requests?incidentId=${i.id}|#${i.id}>`,
       i.type === "down" ? "🔴 Down" : "🟡 Degraded",
-      i.statusCode,
-      i.message,
     ]),
   ];
 
@@ -45,7 +43,7 @@ function formatClosedIncidentsMessage(incidents: Incident[]) {
     ["Service Name", "#ID", "Status", "Duration"],
     ...incidents.map((i) => [
       i.monitorName,
-      i.id,
+      `<https://status.usealbatross.ai/aldo2025/requests?incidentId=${i.id}|#${i.id}>`,
       "🟢 Operational",
       formatDistance(i.closedAt || new Date(), i.openedAt),
     ]),
