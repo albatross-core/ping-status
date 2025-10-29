@@ -39,9 +39,27 @@ export function Nav() {
               <MobileMenu location={location} />
             )}
             {/* Logo */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
+              <svg
+                className="size-8 dark:invert"
+                fill="none"
+                height="81"
+                viewBox="0 0 98 81"
+                width="98"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>Albatross Logo</title>
+                <path
+                  d="M53.4012 8.8568C57.1074 3.8566 63.001 0.902344 69.2697 0.902344H97.9999L79.7941 25.3141C75.8864 30.5538 69.6964 33.646 63.1155 33.646H58.0252C50.4351 33.646 44.2773 39.7132 44.2346 47.2133H63.6729L44.5981 72.9478C40.8919 77.948 34.9983 80.9023 28.7296 80.9023H0L53.4012 8.8568Z"
+                  fill="#030302"
+                />
+                <path
+                  d="M63.9308 80.9023V47.2134H74.8028C87.6142 47.2134 98 57.5393 98 70.2771V80.9023H63.9308Z"
+                  fill="#030302"
+                />
+              </svg>
               <h1 className="whitespace-nowrap font-semibold text-xl">
-                Ping Status
+                Albatross Status
               </h1>
             </div>
           </div>
