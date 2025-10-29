@@ -10,7 +10,7 @@ type OpenIncident = Incident &
 
 function formatOpenIncidentsMessage(incidents: OpenIncident[]) {
   const tableData = [
-    ["Service Name", "#ID", "Status", "Status Code", "Message"],
+    ["Service Name", "#ID", "Status"],
     ...incidents.map((i) => [
       i.monitorName,
       `<https://status.usealbatross.ai/aldo2025/requests?incidentId=${i.id}|#${i.id}>`,
