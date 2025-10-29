@@ -1,9 +1,8 @@
 dbs:
   - path: ${DATABASE_PATH}
-    replica:
-      type: s3
-      bucket: ${S3_BUCKET}
-      region: ${S3_REGION}
-      path: ${S3_PATH}
-      access-key-id: ${S3_ACCESS_KEY_ID}
-      secret-access-key: ${S3_SECRET_ACCESS_KEY}
+    replicas:
+      - type: s3
+        endpoint: ${S3_ENDPOINT}
+        bucket: ${S3_BUCKET}
+        region: ${S3_REGION}
+        path: ${S3_PATH}

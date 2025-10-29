@@ -4,8 +4,8 @@ set -e
 
 # Restore db
 if [ ! -f "$DATABASE_PATH" ]; then
-  echo "Database not found, restoring from backup if exists..."
-  litestream restore -config /app/litestream.yml -if-replica-exists "$DATABASE_PATH"
+  echo "No database found, restoring from replica if exists"
+  litestream restore -v -if-replica-exists -config /app/litestream.yml "$DATABASE_PATH"
 fi
 
 echo "Starting standalone ping-status service..."

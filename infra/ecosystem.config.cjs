@@ -4,7 +4,7 @@ module.exports = {
     {
       name: "litestream",
       script: "litestream",
-      args: "replicate -config ./litestream.yml",
+      args: "replicate -config /app/litestream.yml",
       cwd: "/app",
       instances: 1,
       autorestart: true,

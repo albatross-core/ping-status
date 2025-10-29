@@ -4,6 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
     procps \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 COPY package.json bun.lock ./
@@ -29,9 +30,8 @@ COPY infra/start.sh ./start.sh
 COPY infra/litestream.yml ./litestream.yml
 RUN chmod +x start.sh
 
-
 # Install litestream
-ADD https://github.com/benbjohnson/litestream/releases/download/v0.5.2/litestream-0.5.2-linux-x86_64.tar.gz /tmp/litestream.tar.gz
+ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.8/litestream-v0.3.8-linux-amd64-static.tar.gz /tmp/litestream.tar.gz
 RUN tar -C /usr/local/bin -xzf /tmp/litestream.tar.gz
 
 CMD ["./start.sh"]

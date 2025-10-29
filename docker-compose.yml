@@ -10,4 +10,25 @@ services:
       - .env
     environment:
       - PORT=8080
+      - MONITOR_INTERVAL_MINUTES=1
       - DATABASE_PATH=/app/data/ping-status.db
+      - S3_ACCESS_KEY_ID=minioadmin
+      - S3_SECRET_ACCESS_KEY=minioadmin
+      - S3_BUCKET=status-service
+      - S3_REGION=home
+      - S3_PATH=db
+      - S3_ENDPOINT=http://minio:9000
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"  # S3 API port
+      - "9001:9001"  # Web console port
+    environment:
+      - MINIO_REGION=home
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - ./data:/data
