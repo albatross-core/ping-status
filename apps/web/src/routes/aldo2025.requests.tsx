@@ -109,7 +109,7 @@ function RouteComponent() {
         <div className="grid w-72 grid-rows-[auto_1fr_auto] overflow-hidden border-r">
           <div className="flex items-center justify-between p-4">
             <Link to="/aldo2025">
-              <h1 className="font-semibold text-lg">Ping Status</h1>
+              <h1 className="font-semibold text-lg">Albatross Status</h1>
             </Link>
             <ThemeToggle />
           </div>
