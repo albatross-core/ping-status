@@ -42,7 +42,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { orpc } from "@/lib/orpc";
 import { getStatusBadge } from "@/lib/utils";
 
-export const Route = createFileRoute("/_nav/monitors/$monitorName")({
+export const Route = createFileRoute("/_nav/aldo2025/monitors/$monitorName")({
   validateSearch: z.object({
     period: z.coerce.number().min(1).max(30).default(7),
   }),

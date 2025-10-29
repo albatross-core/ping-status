@@ -10,3 +10,5 @@ export function getStatusBadge(monitorName?: string) {
     ? `![${monitorName} status](${window.location.origin}/api/status-badge?monitorName=${monitorName})`
     : `![All systems status](${window.location.origin}/api/status-badge)`;
 }
+
+export const SECRET_PATH = "/aldo2025";

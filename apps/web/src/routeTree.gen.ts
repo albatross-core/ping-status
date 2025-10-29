@@ -9,18 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as NavRouteRouteImport } from './routes/_nav/route'
 import { Route as NavIndexRouteImport } from './routes/_nav/index'
-import { Route as NavIncidentsRouteImport } from './routes/_nav/incidents'
-import { Route as NavMonitorsIndexRouteImport } from './routes/_nav/monitors/index'
-import { Route as NavMonitorsMonitorNameRouteImport } from './routes/_nav/monitors/$monitorName'
+import { Route as Aldo2025RequestsRouteImport } from './routes/aldo2025.requests'
+import { Route as NavAldo2025IndexRouteImport } from './routes/_nav/aldo2025.index'
+import { Route as NavAldo2025IncidentsRouteImport } from './routes/_nav/aldo2025.incidents'
+import { Route as NavAldo2025MonitorsIndexRouteImport } from './routes/_nav/aldo2025.monitors/index'
+import { Route as NavAldo2025MonitorsMonitorNameRouteImport } from './routes/_nav/aldo2025.monitors/$monitorName'
 
-const RequestsRoute = RequestsRouteImport.update({
-  id: '/requests',
-  path: '/requests',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NavRouteRoute = NavRouteRouteImport.update({
   id: '/_nav',
   getParentRoute: () => rootRouteImport,
@@ -30,79 +26,95 @@ const NavIndexRoute = NavIndexRouteImport.update({
   path: '/',
   getParentRoute: () => NavRouteRoute,
 } as any)
-const NavIncidentsRoute = NavIncidentsRouteImport.update({
-  id: '/incidents',
-  path: '/incidents',
+const Aldo2025RequestsRoute = Aldo2025RequestsRouteImport.update({
+  id: '/aldo2025/requests',
+  path: '/aldo2025/requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NavAldo2025IndexRoute = NavAldo2025IndexRouteImport.update({
+  id: '/aldo2025/',
+  path: '/aldo2025/',
   getParentRoute: () => NavRouteRoute,
 } as any)
-const NavMonitorsIndexRoute = NavMonitorsIndexRouteImport.update({
-  id: '/monitors/',
-  path: '/monitors/',
+const NavAldo2025IncidentsRoute = NavAldo2025IncidentsRouteImport.update({
+  id: '/aldo2025/incidents',
+  path: '/aldo2025/incidents',
   getParentRoute: () => NavRouteRoute,
 } as any)
-const NavMonitorsMonitorNameRoute = NavMonitorsMonitorNameRouteImport.update({
-  id: '/monitors/$monitorName',
-  path: '/monitors/$monitorName',
-  getParentRoute: () => NavRouteRoute,
-} as any)
+const NavAldo2025MonitorsIndexRoute =
+  NavAldo2025MonitorsIndexRouteImport.update({
+    id: '/aldo2025/monitors/',
+    path: '/aldo2025/monitors/',
+    getParentRoute: () => NavRouteRoute,
+  } as any)
+const NavAldo2025MonitorsMonitorNameRoute =
+  NavAldo2025MonitorsMonitorNameRouteImport.update({
+    id: '/aldo2025/monitors/$monitorName',
+    path: '/aldo2025/monitors/$monitorName',
+    getParentRoute: () => NavRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/requests': typeof RequestsRoute
-  '/incidents': typeof NavIncidentsRoute
+  '/aldo2025/requests': typeof Aldo2025RequestsRoute
   '/': typeof NavIndexRoute
-  '/monitors/$monitorName': typeof NavMonitorsMonitorNameRoute
-  '/monitors': typeof NavMonitorsIndexRoute
+  '/aldo2025/incidents': typeof NavAldo2025IncidentsRoute
+  '/aldo2025': typeof NavAldo2025IndexRoute
+  '/aldo2025/monitors/$monitorName': typeof NavAldo2025MonitorsMonitorNameRoute
+  '/aldo2025/monitors': typeof NavAldo2025MonitorsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/requests': typeof RequestsRoute
-  '/incidents': typeof NavIncidentsRoute
+  '/aldo2025/requests': typeof Aldo2025RequestsRoute
   '/': typeof NavIndexRoute
-  '/monitors/$monitorName': typeof NavMonitorsMonitorNameRoute
-  '/monitors': typeof NavMonitorsIndexRoute
+  '/aldo2025/incidents': typeof NavAldo2025IncidentsRoute
+  '/aldo2025': typeof NavAldo2025IndexRoute
+  '/aldo2025/monitors/$monitorName': typeof NavAldo2025MonitorsMonitorNameRoute
+  '/aldo2025/monitors': typeof NavAldo2025MonitorsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_nav': typeof NavRouteRouteWithChildren
-  '/requests': typeof RequestsRoute
-  '/_nav/incidents': typeof NavIncidentsRoute
+  '/aldo2025/requests': typeof Aldo2025RequestsRoute
   '/_nav/': typeof NavIndexRoute
-  '/_nav/monitors/$monitorName': typeof NavMonitorsMonitorNameRoute
-  '/_nav/monitors/': typeof NavMonitorsIndexRoute
+  '/_nav/aldo2025/incidents': typeof NavAldo2025IncidentsRoute
+  '/_nav/aldo2025/': typeof NavAldo2025IndexRoute
+  '/_nav/aldo2025/monitors/$monitorName': typeof NavAldo2025MonitorsMonitorNameRoute
+  '/_nav/aldo2025/monitors/': typeof NavAldo2025MonitorsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/requests'
-    | '/incidents'
+    | '/aldo2025/requests'
     | '/'
-    | '/monitors/$monitorName'
-    | '/monitors'
+    | '/aldo2025/incidents'
+    | '/aldo2025'
+    | '/aldo2025/monitors/$monitorName'
+    | '/aldo2025/monitors'
   fileRoutesByTo: FileRoutesByTo
-  to: '/requests' | '/incidents' | '/' | '/monitors/$monitorName' | '/monitors'
+  to:
+    | '/aldo2025/requests'
+    | '/'
+    | '/aldo2025/incidents'
+    | '/aldo2025'
+    | '/aldo2025/monitors/$monitorName'
+    | '/aldo2025/monitors'
   id:
     | '__root__'
     | '/_nav'
-    | '/requests'
-    | '/_nav/incidents'
+    | '/aldo2025/requests'
     | '/_nav/'
-    | '/_nav/monitors/$monitorName'
-    | '/_nav/monitors/'
+    | '/_nav/aldo2025/incidents'
+    | '/_nav/aldo2025/'
+    | '/_nav/aldo2025/monitors/$monitorName'
+    | '/_nav/aldo2025/monitors/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   NavRouteRoute: typeof NavRouteRouteWithChildren
-  RequestsRoute: typeof RequestsRoute
+  Aldo2025RequestsRoute: typeof Aldo2025RequestsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/requests': {
-      id: '/requests'
-      path: '/requests'
-      fullPath: '/requests'
-      preLoaderRoute: typeof RequestsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_nav': {
       id: '/_nav'
       path: ''
@@ -117,42 +129,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NavIndexRouteImport
       parentRoute: typeof NavRouteRoute
     }
-    '/_nav/incidents': {
-      id: '/_nav/incidents'
-      path: '/incidents'
-      fullPath: '/incidents'
-      preLoaderRoute: typeof NavIncidentsRouteImport
+    '/aldo2025/requests': {
+      id: '/aldo2025/requests'
+      path: '/aldo2025/requests'
+      fullPath: '/aldo2025/requests'
+      preLoaderRoute: typeof Aldo2025RequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_nav/aldo2025/': {
+      id: '/_nav/aldo2025/'
+      path: '/aldo2025'
+      fullPath: '/aldo2025'
+      preLoaderRoute: typeof NavAldo2025IndexRouteImport
       parentRoute: typeof NavRouteRoute
     }
-    '/_nav/monitors/': {
-      id: '/_nav/monitors/'
-      path: '/monitors'
-      fullPath: '/monitors'
-      preLoaderRoute: typeof NavMonitorsIndexRouteImport
+    '/_nav/aldo2025/incidents': {
+      id: '/_nav/aldo2025/incidents'
+      path: '/aldo2025/incidents'
+      fullPath: '/aldo2025/incidents'
+      preLoaderRoute: typeof NavAldo2025IncidentsRouteImport
       parentRoute: typeof NavRouteRoute
     }
-    '/_nav/monitors/$monitorName': {
-      id: '/_nav/monitors/$monitorName'
-      path: '/monitors/$monitorName'
-      fullPath: '/monitors/$monitorName'
-      preLoaderRoute: typeof NavMonitorsMonitorNameRouteImport
+    '/_nav/aldo2025/monitors/': {
+      id: '/_nav/aldo2025/monitors/'
+      path: '/aldo2025/monitors'
+      fullPath: '/aldo2025/monitors'
+      preLoaderRoute: typeof NavAldo2025MonitorsIndexRouteImport
+      parentRoute: typeof NavRouteRoute
+    }
+    '/_nav/aldo2025/monitors/$monitorName': {
+      id: '/_nav/aldo2025/monitors/$monitorName'
+      path: '/aldo2025/monitors/$monitorName'
+      fullPath: '/aldo2025/monitors/$monitorName'
+      preLoaderRoute: typeof NavAldo2025MonitorsMonitorNameRouteImport
       parentRoute: typeof NavRouteRoute
     }
   }
 }
 
 interface NavRouteRouteChildren {
-  NavIncidentsRoute: typeof NavIncidentsRoute
   NavIndexRoute: typeof NavIndexRoute
-  NavMonitorsMonitorNameRoute: typeof NavMonitorsMonitorNameRoute
-  NavMonitorsIndexRoute: typeof NavMonitorsIndexRoute
+  NavAldo2025IncidentsRoute: typeof NavAldo2025IncidentsRoute
+  NavAldo2025IndexRoute: typeof NavAldo2025IndexRoute
+  NavAldo2025MonitorsMonitorNameRoute: typeof NavAldo2025MonitorsMonitorNameRoute
+  NavAldo2025MonitorsIndexRoute: typeof NavAldo2025MonitorsIndexRoute
 }
 
 const NavRouteRouteChildren: NavRouteRouteChildren = {
-  NavIncidentsRoute: NavIncidentsRoute,
   NavIndexRoute: NavIndexRoute,
-  NavMonitorsMonitorNameRoute: NavMonitorsMonitorNameRoute,
-  NavMonitorsIndexRoute: NavMonitorsIndexRoute,
+  NavAldo2025IncidentsRoute: NavAldo2025IncidentsRoute,
+  NavAldo2025IndexRoute: NavAldo2025IndexRoute,
+  NavAldo2025MonitorsMonitorNameRoute: NavAldo2025MonitorsMonitorNameRoute,
+  NavAldo2025MonitorsIndexRoute: NavAldo2025MonitorsIndexRoute,
 }
 
 const NavRouteRouteWithChildren = NavRouteRoute._addFileChildren(
@@ -161,7 +189,7 @@ const NavRouteRouteWithChildren = NavRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   NavRouteRoute: NavRouteRouteWithChildren,
-  RequestsRoute: RequestsRoute,
+  Aldo2025RequestsRoute: Aldo2025RequestsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

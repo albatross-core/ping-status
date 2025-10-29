@@ -18,8 +18,9 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { orpc } from "@/lib/orpc";
+import { SECRET_PATH } from "@/lib/utils";
 
-export const Route = createFileRoute("/_nav/monitors/")({
+export const Route = createFileRoute("/_nav/aldo2025/monitors/")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(orpc.lastWeekLatencies.queryOptions()),
@@ -58,7 +59,7 @@ function RouteComponent() {
               <Button asChild variant="ghost">
                 <Link
                   params={{ monitorName: monitor.name }}
-                  to="/monitors/$monitorName"
+                  to={`${SECRET_PATH}/monitors/$monitorName`}
                 >
                   Details
                   <ChevronRight />

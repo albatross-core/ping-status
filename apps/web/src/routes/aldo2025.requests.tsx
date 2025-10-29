@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import { type client, orpc } from "@/lib/orpc";
 
-export const Route = createFileRoute("/requests")({
+export const Route = createFileRoute("/aldo2025/requests")({
   validateSearch: z.object({
     monitorName: z.array(z.string().trim().min(1)).default([]),
     statusCode: z.array(z.enum(["2xx", "4xx", "5xx"])).default([]),
@@ -108,7 +108,7 @@ function RouteComponent() {
       <div className="grid h-screen grid-cols-[auto_1fr] overflow-hidden">
         <div className="grid w-72 grid-rows-[auto_1fr_auto] overflow-hidden border-r">
           <div className="flex items-center justify-between p-4">
-            <Link to="/">
+            <Link to="/aldo2025">
               <h1 className="font-semibold text-lg">Ping Status</h1>
             </Link>
             <ThemeToggle />

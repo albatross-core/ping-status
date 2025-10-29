@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import type { client } from "@/lib/orpc";
-import { cn } from "@/lib/utils";
+import { cn, SECRET_PATH } from "@/lib/utils";
 
 type IncidentCardProps = Awaited<
   ReturnType<typeof client.incidents>
@@ -114,7 +114,10 @@ export function IncidentCard(incident: IncidentCardProps) {
         )}
 
         <Button asChild className="w-full" variant="outline">
-          <Link search={{ incidentId: incident.id }} to="/requests">
+          <Link
+            search={{ incidentId: incident.id }}
+            to={`${SECRET_PATH}/requests`}
+          >
             <Logs />
             View Failed Requests
           </Link>

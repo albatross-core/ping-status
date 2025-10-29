@@ -14,17 +14,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { SECRET_PATH } from "@/lib/utils";
 
 const navigationLinks = [
-  { to: "/", label: "Status", icon: HouseIcon },
-  { to: "/incidents", label: "Incidents", icon: AlertCircle },
-  { to: "/monitors", label: "Monitors", icon: ChartSpline },
-  { to: "/requests", label: "Requests", icon: Logs },
+  { to: SECRET_PATH, label: "Status", icon: HouseIcon },
+  { to: `${SECRET_PATH}/incidents`, label: "Incidents", icon: AlertCircle },
+  { to: `${SECRET_PATH}/monitors`, label: "Monitors", icon: ChartSpline },
+  { to: `${SECRET_PATH}/requests`, label: "Requests", icon: Logs },
 ];
 
 export function Nav() {
   const location = useLocation({
-    select: ({ pathname }) => `/${pathname.split("/")[1]}`,
+    select: ({ pathname }) => `/${pathname.split("/").slice(1, 3).join("/")}`,
   });
 
   return (
@@ -34,7 +35,9 @@ export function Nav() {
           {/* Left side */}
           <div className="flex flex-1 items-center gap-2">
             {/* Mobile menu trigger */}
-            <MobileMenu location={location} />
+            {location.startsWith(SECRET_PATH) && (
+              <MobileMenu location={location} />
+            )}
             {/* Logo */}
             <div className="flex items-center">
               <h1 className="whitespace-nowrap font-semibold text-xl">
@@ -43,31 +46,33 @@ export function Nav() {
             </div>
           </div>
           {/* Middle area */}
-          <NavigationMenu className="max-md:hidden">
-            <NavigationMenuList className="gap-2">
-              {navigationLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <NavigationMenuItem key={link.label}>
-                    <NavigationMenuLink
-                      active={location === link.to}
-                      asChild
-                      className="flex-row items-center gap-2 py-1.5 font-medium text-foreground hover:text-primary"
-                    >
-                      <Link to={link.to}>
-                        <Icon
-                          aria-hidden="true"
-                          className="text-muted-foreground/80"
-                          size={16}
-                        />
-                        <span>{link.label}</span>
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                );
-              })}
-            </NavigationMenuList>
-          </NavigationMenu>
+          {location.startsWith(SECRET_PATH) && (
+            <NavigationMenu className="max-md:hidden">
+              <NavigationMenuList className="gap-2">
+                {navigationLinks.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <NavigationMenuItem key={link.label}>
+                      <NavigationMenuLink
+                        active={location === link.to}
+                        asChild
+                        className="flex-row items-center gap-2 py-1.5 font-medium text-foreground hover:text-primary"
+                      >
+                        <Link to={link.to}>
+                          <Icon
+                            aria-hidden="true"
+                            className="text-muted-foreground/80"
+                            size={16}
+                          />
+                          <span>{link.label}</span>
+                        </Link>
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                  );
+                })}
+              </NavigationMenuList>
+            </NavigationMenu>
+          )}
           {/* Right side */}
           <div className="flex flex-1 items-center justify-end gap-2">
             <ThemeToggle />

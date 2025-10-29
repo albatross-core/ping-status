@@ -21,7 +21,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { orpc } from "@/lib/orpc";
 
-export const Route = createFileRoute("/_nav/incidents")({
+export const Route = createFileRoute("/_nav/aldo2025/incidents")({
   validateSearch: z.object({
     status: z
       .array(z.enum(["open", "closed"]))
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/_nav/incidents")({
     <div className="mx-auto max-w-screen-lg space-y-4 px-4 py-10 md:px-6">
       {Array.from({ length: 3 }).map((_, index) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: skeleton
-        <Skeleton className="h-40" key={index} />
+        (<Skeleton className="h-40" key={index} />)
       ))}
     </div>
   ),

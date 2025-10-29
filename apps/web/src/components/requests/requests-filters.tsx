@@ -11,10 +11,11 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { orpc } from "@/lib/orpc";
+import { SECRET_PATH } from "@/lib/utils";
 
 function RequestsFilters() {
   const search = useSearch({
-    from: "/requests",
+    from: `${SECRET_PATH}/requests`,
   });
 
   const { data: monitors } = useSuspenseQuery(
@@ -23,7 +24,7 @@ function RequestsFilters() {
     })
   );
 
-  const navigate = useNavigate({ from: "/requests" });
+  const navigate = useNavigate({ from: `${SECRET_PATH}/requests` });
 
   const handleIncidentIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value) {
